@@ -9,10 +9,8 @@ interface MeetingAgendaProps {
 export function MeetingAgenda({ agendas, isEditing, onChange }: MeetingAgendaProps) {
   const handleAddAgenda = () => {
     const newAgenda: Agenda = {
-      id: crypto.randomUUID(),
-      title: '',
-      description: '',
-      order: agendas.length + 1,
+      titulo: '',
+      descricao: '',
     };
     onChange([...agendas, newAgenda]);
   };
@@ -57,24 +55,24 @@ export function MeetingAgenda({ agendas, isEditing, onChange }: MeetingAgendaPro
               <div className="space-y-2">
                 <input
                   type="text"
-                  value={agenda.title}
-                  onChange={(e) =>
-                    handleUpdateAgenda(agenda.id, { title: e.target.value })
-                  }
+                  value={agenda.titulo}
+                  // onChange={(e) =>
+                  //   handleUpdateAgenda(agenda.id, { title: e.target.value })
+                  // }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md"
                   placeholder="Título da pauta"
                 />
                 <textarea
-                  value={agenda.description}
-                  onChange={(e) =>
-                    handleUpdateAgenda(agenda.id, { description: e.target.value })
-                  }
+                  value={agenda.descricao}
+                  // onChange={(e) =>
+                  //   handleUpdateAgenda(agenda.id, { description: e.target.value })
+                  // }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md"
                   placeholder="Descrição da pauta"
                   rows={2}
                 />
                 <button
-                  onClick={() => handleRemoveAgenda(agenda.id)}
+                  // onClick={() => handleRemoveAgenda(agenda.id)}
                   className="text-red-600 hover:text-red-700"
                 >
                   Remover
@@ -83,9 +81,9 @@ export function MeetingAgenda({ agendas, isEditing, onChange }: MeetingAgendaPro
             ) : (
               <>
                 <h3 className="font-medium">
-                  {agenda.order}. {agenda.title}
+                  {agenda.titulo}
                 </h3>
-                <p className="text-gray-600 mt-1">{agenda.description}</p>
+                <p className="text-gray-600 mt-1">{agenda.descricao}</p>
               </>
             )}
           </div>

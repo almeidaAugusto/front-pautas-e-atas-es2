@@ -1,33 +1,34 @@
 import { useQuery } from '@tanstack/react-query';
 import { format, isToday, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { meetingsApi, mockMeetings } from '../services/api';
+import { meetingsApi } from '../services/api';
 import { MeetingCard } from '../components/MeetingCard';
 import { TodaySchedule } from '../components/meeting/TodaySchedule';
 import { useNavigate } from 'react-router-dom';
+import { MeetingFormApiData } from '../types/meeting';
 
 export function Home() {
   const navigate = useNavigate();
   
   const { 
-    data: meetings = mockMeetings,
+    data: meetings = [],
     isLoading,
     error
   } = useQuery({
     queryKey: ['meetings'],
-    queryFn: () => Promise.resolve(mockMeetings),
+    queryFn: () => meetingsApi.getAll(),
   });
 
-  const todayMeetings = meetings.filter(meeting => 
-    isToday(parseISO(meeting.date))
-  ).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  const todayMeetings = (meetings as MeetingFormApiData[]).filter(meeting => 
+    isToday(parseISO(meeting.dataHora))
+  ).sort((a, b) => new Date(a.dataHora).getTime() - new Date(b.dataHora).getTime());
 
-  const upcomingMeetings = meetings.filter(
-    meeting => !isToday(parseISO(meeting.date)) && meeting.status === 'scheduled'
+  const upcomingMeetings = (meetings as MeetingFormApiData[]).filter(
+    meeting => !isToday(parseISO(meeting.dataHora)) && new Date(meeting.dataHora) >= new Date()
   );
   
-  const pastMeetings = meetings.filter(
-    meeting => meeting.status === 'completed' || meeting.status === 'cancelled'
+  const pastMeetings = (meetings as MeetingFormApiData[]).filter(
+    meeting => !isToday(parseISO(meeting.dataHora)) && new Date(meeting.dataHora) < new Date()
   );
 
   const handleEdit = (id: string) => {
@@ -74,7 +75,7 @@ export function Home() {
           meetings={todayMeetings}
           isLoading={isLoading}
           error={error as Error}
-        />
+        /> 
       </section>
 
       <section className="mb-12">

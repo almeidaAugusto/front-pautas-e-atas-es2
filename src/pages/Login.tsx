@@ -1,6 +1,7 @@
 import { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '../lib/utils';
+import { membersApi } from '../services/api';
 
 export function Login() {
   const navigate = useNavigate();
@@ -36,15 +37,15 @@ export function Login() {
       return;
     }
 
-    // Mock authentication
-    if (formData.email === 'admin@association.com' && formData.password === 'admin123') {
-      // In a real app, you would:
-      // 1. Store the token in localStorage/secure storage
-      // 2. Update auth context/state
-      navigate('/');
-    } else {
-      setLoginError('Email ou senha inválidos');
-    }
+    membersApi
+      .login(formData.email, formData.password)
+      .then(() => {
+        navigate('/');
+      })
+      .catch((error) => {
+        setLoginError(error.message);
+      });
+
   };
 
   return (

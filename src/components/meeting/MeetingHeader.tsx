@@ -1,15 +1,15 @@
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { Meeting } from '../../types/meeting';
+import { Meeting, MeetingFormApiData } from '../../types/meeting';
 import { EditableField } from '../ui/EditableField';
 
 interface MeetingHeaderProps {
-  meeting: Meeting;
+  meeting: MeetingFormApiData;
   isEditing: boolean;
   onEdit: () => void;
   onSave: () => void;
   onCancel: () => void;
-  onChange: (meeting: Meeting) => void;
+  onChange: (meeting: MeetingFormApiData) => void;
 }
 
 export function MeetingHeader({
@@ -22,9 +22,9 @@ export function MeetingHeader({
 }: MeetingHeaderProps) {
   const handleTimeChange = (time: string) => {
     const [hours, minutes] = time.split(':');
-    const newDate = new Date(meeting.date);
+    const newDate = new Date(meeting.dataHora);
     newDate.setHours(parseInt(hours), parseInt(minutes));
-    onChange({ ...meeting, date: newDate.toISOString() });
+    onChange({ ...meeting, dataHora: newDate.toISOString() });
   };
 
   return (
@@ -32,9 +32,9 @@ export function MeetingHeader({
       <div className="flex justify-between items-start mb-6">
         <div className="flex-1">
           <EditableField
-            value={meeting.title}
+            value={meeting.titulo}
             isEditing={isEditing}
-            onChange={(value) => onChange({ ...meeting, title: value })}
+            onChange={(value) => onChange({ ...meeting, titulo: value })}
             className="text-2xl font-bold"
           />
         </div>
@@ -68,16 +68,16 @@ export function MeetingHeader({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <EditableField
           label="Horário"
-          value={format(new Date(meeting.date), 'HH:mm', { locale: ptBR })}
+          value={format(new Date(meeting.dataHora), 'HH:mm', { locale: ptBR })}
           type="time"
           isEditing={isEditing}
           onChange={handleTimeChange}
         />
         <EditableField
           label="Local"
-          value={meeting.location}
+          value={meeting.local}
           isEditing={isEditing}
-          onChange={(value) => onChange({ ...meeting, location: value })}
+          onChange={(value) => onChange({ ...meeting, local: value })}
         />
       </div>
     </div>

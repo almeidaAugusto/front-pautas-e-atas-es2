@@ -6,6 +6,7 @@ import { Members } from './pages/Members';
 import { MeetingDetails } from './pages/MeetingDetails';
 import { CreateMeeting } from './pages/CreateMeeting';
 import { Login } from './pages/Login';
+import RequireAuth from './components/auth/RequireAuth';
 
 const queryClient = new QueryClient();
 
@@ -18,33 +19,41 @@ export default function App() {
           <Route
             path="/"
             element={
-              <Layout>
-                <Home />
-              </Layout>
+              <RequireAuth>
+                <Layout>
+                  <Home />
+                </Layout>
+              </RequireAuth>
             }
           />
           <Route
             path="/membros"
             element={
-              <Layout>
-                <Members />
-              </Layout>
+              <RequireAuth>
+                <Layout>
+                  <Members />
+                </Layout>
+              </RequireAuth>
             }
           />
           <Route
             path="/meetings/new"
             element={
-              <Layout>
-                <CreateMeeting />
-              </Layout>
+              <RequireAuth>
+                <Layout>
+                  <CreateMeeting />
+                </Layout>
+              </RequireAuth>
             }
           />
           <Route
             path="/meetings/:id"
             element={
-              <Layout>
-                <MeetingDetails />
-              </Layout>
+              <RequireAuth>
+                <Layout>
+                  <MeetingDetails />
+                </Layout>
+              </RequireAuth>
             }
           />
           <Route path="*" element={<Navigate to="/login" replace />} />

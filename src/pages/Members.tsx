@@ -2,18 +2,19 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { membersApi } from '../services/api';
 import { MemberModal } from '../components/MemberModal';
+import { Member } from '../types/member';
 
 export function Members() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { data: members = [] } = useQuery({
+  const { data: members = [], refetch } = useQuery({
     queryKey: ['members'],
     queryFn: membersApi.getAll,
   });
 
   const filteredMembers = members.filter((member) =>
-    member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    member.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
     member.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -22,11 +23,22 @@ export function Members() {
       try {
         await membersApi.delete(id);
         // Recarregar dados
+        refetch();
       } catch (error) {
         console.error('Erro ao excluir membro:', error);
       }
     }
   };
+
+  const handleSave = async (member: Omit<Member, 'id' | 'tipoUsuario'>) => {
+    try {
+      await membersApi.create(member);
+      // Recarregar dados após salvar
+      refetch();
+    } catch (error) {
+      console.error('Erro ao criar membro:', error);
+    }
+  }
 
   return (
     <div className="p-8">
@@ -73,7 +85,7 @@ export function Members() {
               <tr key={member.id}>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-gray-900">
-                    {member.name}
+                    {member.nome}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
@@ -81,7 +93,7 @@ export function Members() {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                    {member.role === 'manager' ? 'Gerente' : 'Membro'}
+                    {member.tipoUsuario}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -107,7 +119,7 @@ export function Members() {
       <MemberModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSave={membersApi.create}
+        onSave={handleSave}
       />
     </div>
   );

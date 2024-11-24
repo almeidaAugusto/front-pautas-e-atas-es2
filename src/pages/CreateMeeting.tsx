@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { membersApi } from '../services/api';
+import { meetingsApi, membersApi } from '../services/api';
 import { AgendaForm } from '../components/meeting/AgendaForm';
 import { MemberSelection } from '../components/meeting/MemberSelection';
 import { ExternalContacts } from '../components/meeting/ExternalContacts';
-import { type Agenda, type Member } from '../types/meeting';
+import { type Agenda, type MeetingFormApiData } from '../types/meeting';
 
 interface ExternalContact {
   name: string;
@@ -74,18 +74,40 @@ export function CreateMeeting() {
     }
 
     try {
-      // Simulate API call to create meeting
-      console.log('Creating meeting:', {
-        ...formData,
-        datetime: `${formData.date}T${formData.time}`,
-        status: 'scheduled',
-      });
+      // transform in MeetingFormApiData
+
+      const meeting: Omit<MeetingFormApiData, 'id'> = {
+        titulo: formData.title,
+        dataHora: `${formData.date}T${formData.time}`,
+        local: formData.location,
+        ata: '',
+        pautas: formData.agendas.map(({ title, description }) => ({ titulo: title, descricao: description })),
+        membrosParticipantes: handleMembers(),
+      };
+
+      // Create meeting
+      await meetingsApi.create(meeting);
 
       // Simulate success and redirect
       navigate('/');
     } catch (error) {
       console.error('Error creating meeting:', error);
     }
+  };
+
+  const handleMembers = (): { nome: string; email: string; }[] => {
+    const selectedMembers = formData.selectedMembers.map((id) => {
+      const member = members.find((m) => m.id === id);
+      if (member) {
+        return { email: member.email, nome: member.nome };
+      }
+    }).filter(Boolean) as { nome: string; email: string; }[]; // Filter out undefined values
+
+    const externalContacts = formData.externalContacts.map((contact) => {
+      return { email: contact.email, nome: contact.name };
+    });
+
+    return [...selectedMembers, ...externalContacts];
   };
 
   return (

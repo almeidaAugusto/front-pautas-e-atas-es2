@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { type Member } from '../../types/member';
+import { type Member } from '../../types/meeting';
 
 interface MemberSelectionProps {
-  members: Member[];
+  members: Omit<Member, 'tipoUsuario'>[];
   selectedMembers: string[];
   onChange: (selectedMembers: string[]) => void;
   error?: string;
@@ -18,12 +18,15 @@ export function MemberSelection({
 
   const filteredMembers = members.filter(
     (member) =>
-      member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      member.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
       member.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleToggleMember = (memberId: string) => {
+    // Verificar se o membro já está selecionado
     const isSelected = selectedMembers.includes(memberId);
+
+    // Atualizar lista de membros selecionados
     if (isSelected) {
       onChange(selectedMembers.filter((id) => id !== memberId));
     } else {
@@ -59,7 +62,7 @@ export function MemberSelection({
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
               <div className="ml-3">
-                <p className="text-sm font-medium text-gray-900">{member.name}</p>
+                <p className="text-sm font-medium text-gray-900">{member.nome}</p>
                 <p className="text-sm text-gray-500">{member.email}</p>
               </div>
             </label>

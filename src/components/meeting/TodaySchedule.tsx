@@ -1,8 +1,8 @@
-import { Meeting } from '../../types/meeting';
+import { MeetingFormApiData } from '../../types/meeting';
 import { MeetingDetailsCard } from './MeetingDetailsCard';
 
 interface TodayScheduleProps {
-  meetings: Meeting[];
+  meetings: MeetingFormApiData[];
   isLoading: boolean;
   error: Error | null;
 }

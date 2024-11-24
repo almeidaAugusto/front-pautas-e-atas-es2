@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Member } from '../../types/meeting';
+import { MembrosParticipantes } from '../../types/meeting';
 import { isToday, parseISO } from 'date-fns';
 
 interface AttendanceSectionProps {
-  attendees: Member[];
+  attendees: MembrosParticipantes[];
   meetingDate: string;
   onAttendanceChange: (attendeeIds: string[]) => void;
 }
@@ -53,7 +53,7 @@ export function AttendanceSection({
               className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded disabled:opacity-50"
             />
             <div className="ml-3">
-              <p className="font-medium">{attendee.name}</p>
+              <p className="font-medium">{attendee.nome}</p>
               <p className="text-sm text-gray-600">{attendee.email}</p>
             </div>
           </label>

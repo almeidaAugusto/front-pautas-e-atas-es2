@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { format, isToday, parseISO } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+// import { isToday, parseISO } from 'date-fns';
 import { meetingsApi } from '../services/api';
-import { Meeting } from '../types/meeting';
+import { MeetingFormApiData } from '../types/meeting';
 import { MeetingHeader } from '../components/meeting/MeetingHeader';
 import { MeetingAgenda } from '../components/meeting/MeetingAgenda';
 import { AttendanceSection } from '../components/meeting/AttendanceSection';
@@ -14,9 +13,8 @@ import { ErrorMessage } from '../components/ui/ErrorMessage';
 
 export function MeetingDetails() {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
-  const [editedMeeting, setEditedMeeting] = useState<Meeting | null>(null);
+  const [editedMeeting, setEditedMeeting] = useState<MeetingFormApiData | null>(null);
 
   const {
     data: meeting,
@@ -31,6 +29,8 @@ export function MeetingDetails() {
     },
     enabled: !!id,
   });
+
+  console.log('Meeting', meeting);
 
   if (isLoading) {
     return (
@@ -77,33 +77,26 @@ export function MeetingDetails() {
   const handleAttendanceChange = (attendeeIds: string[]) => {
     if (!editedMeeting) return;
 
-    const presentAttendees = meeting.attendees.filter(a => 
+    const presentAttendees = meeting.membrosParticipantes.filter(a => 
       attendeeIds.includes(a.id)
     );
     
     const attendanceList = presentAttendees
-      .map(a => `- ${a.name}`)
+      .map(a => `- ${a.nome}`)
       .join('\n');
 
-    const currentMinutes = editedMeeting.minutes?.content || '';
+    const currentMinutes = editedMeeting.ata || '';
     const attendanceSection = '\n\nLista de Presença:\n' + attendanceList;
 
     setEditedMeeting({
       ...editedMeeting,
-      minutes: {
-        ...editedMeeting.minutes || {
-          id: crypto.randomUUID(),
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        },
-        content: currentMinutes.includes('Lista de Presença:')
+      ata: currentMinutes.includes('Lista de Presença:')
           ? currentMinutes.replace(/Lista de Presença:[\s\S]*$/, 'Lista de Presença:\n' + attendanceList)
           : currentMinutes + attendanceSection,
-      },
     });
   };
 
-  const isTodayMeeting = isToday(parseISO(meeting.date));
+  // const isTodayMeeting = isToday(parseISO(meeting.date));
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-8">
@@ -120,32 +113,25 @@ export function MeetingDetails() {
       />
 
       <MeetingAgenda
-        agendas={editedMeeting.agendas}
+        agendas={editedMeeting.pautas}
         isEditing={isEditing}
-        onChange={(agendas) => setEditedMeeting({ ...editedMeeting, agendas })}
+        onChange={(pautas) => setEditedMeeting({ ...editedMeeting, pautas })}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <AttendanceSection
-          attendees={meeting.attendees}
-          meetingDate={meeting.date}
+          attendees={meeting.membrosParticipantes}
+          meetingDate={meeting.dataHora}
           onAttendanceChange={handleAttendanceChange}
         />
 
         <MinutesSection
-          minutes={editedMeeting.minutes?.content || ''}
-          meetingDate={meeting.date}
+          minutes={editedMeeting.ata || ''}
+          meetingDate={meeting.dataHora}
           onChange={(content) =>
             setEditedMeeting({
               ...editedMeeting,
-              minutes: {
-                ...editedMeeting.minutes || {
-                  id: crypto.randomUUID(),
-                  createdAt: new Date().toISOString(),
-                  updatedAt: new Date().toISOString(),
-                },
-                content,
-              },
+              ata: content,
             })
           }
         />

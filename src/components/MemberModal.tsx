@@ -4,7 +4,7 @@ import { Member } from '../types/member';
 interface MemberModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (member: Omit<Member, 'id' | 'role'>) => void;
+  onSave: (member: Omit<Member, 'id' | 'tipoUsuario'>) => void;
 }
 
 export function MemberModal({ isOpen, onClose, onSave }: MemberModalProps) {
@@ -41,7 +41,11 @@ export function MemberModal({ isOpen, onClose, onSave }: MemberModalProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      onSave(formData);
+      onSave({
+        nome: formData.name,
+        email: formData.email,
+        senha: formData.password,
+      });
       onClose();
     }
   };
