@@ -12,6 +12,7 @@ import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 import { ErrorMessage } from '../components/ui/ErrorMessage';
 import { SaveMinutesModal } from '../components/SaveMinutesModal';
 import { parseISO } from 'date-fns';
+import { ReportButton } from '../components/ui/ReportButton';
 
 export function MeetingDetails() {
   const { id } = useParams<{ id: string }>();
@@ -187,7 +188,7 @@ export function MeetingDetails() {
             })
           }
         />
-         <div className="flex justify-end">
+         <div className="flex justify-end gap-3">
             <button
               onClick={() => setIsSaveModalOpen(true)}
               className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50"
@@ -195,6 +196,7 @@ export function MeetingDetails() {
             >
               Salvar Ata
             </button>
+            <ReportButton meeting={meeting} />
           </div>
         </div>
       </div>
