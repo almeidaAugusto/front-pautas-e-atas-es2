@@ -188,9 +188,18 @@ export const meetingsApi = {
 
 
 
-  update: async (id: string, meeting: Partial<Meeting>): Promise<MeetingFormApiData> => {
+  update: async (id: string, meeting: Partial<MeetingFormApiData>): Promise<MeetingFormApiData> => {
+    // remove ids from agenda
+    const meetingUpdate = {
+      ...meeting,
+      pautas: meeting.pautas?.map(pauta => ({
+        titulo: pauta.titulo,
+        descricao: pauta.descricao
+      }))
+    };
+
     try {
-      const {data} = await api.put(`/api/reuniao/${id}`, meeting, {
+      const {data} = await api.put(`/api/reuniao/${id}`, meetingUpdate, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`
