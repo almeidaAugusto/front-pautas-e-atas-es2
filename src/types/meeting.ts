@@ -50,3 +50,10 @@ export interface MembrosParticipantes{
   nome: string;
   email: string;
 }
+
+export interface Participante {
+  id: string;
+  nome: string;
+  email: string;
+  estaPresente: boolean;
+}
